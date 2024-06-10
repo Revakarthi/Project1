@@ -17,7 +17,7 @@ df.shape
 df['Review_Text']=df['Review_Text'].str.lower()
 # **Define keywords for sentiment analysis**
 positive_keywords = ['great', 'excellent', 'highly recommended', 'satisfied', 'caring', 'attentive', 'couldn\'t be happier', 'very satisfied']
-negative_keywords = ['bad', 'avoid', 'terrible', 'disappointing', 'would not recommend', 'won\'t be coming back']
+negative_keywords = ['bad experience', 'avoid', 'terrible', 'disappointing', 'would not recommend', 'won\'t be coming back']
 # Defining the Data Cleaning Function
 def clean_data(row):
     review = row['Review_Text'].lower() # Converts the review text to lowercase for consistent keyword matching
@@ -178,11 +178,13 @@ plt.xticks(K)
 plt.legend()
 plt.grid(True)
 plt.show()
+
 y_pred=knnclf.predict(X_test_cv)
 cm=confusion_matrix(y_test,y_pred)
 print(cm)
 print(accuracy_score(y_test,y_pred)) #computes the accuracy of the classification model.
 print(classification_report(y_test,y_pred))
+
 # Assuming X_train_cv and y_train are your training data
 logistic_reg_clf=LogisticRegression()
 logistic_reg_clf.fit(X_train_cv, y_train)
@@ -190,12 +192,7 @@ y_pred=logistic_reg_clf.predict(X_test_cv)
 cm=confusion_matrix(y_test,y_pred)
 print(cm)
 print(accuracy_score(y_test,y_pred))
-random_forest_classifier=RandomForestClassifier(n_estimators=150)
-random_forest_classifier.fit(X_train_cv,y_train)
-y_pred=random_forest_classifier.predict(X_test_cv)
-cm=confusion_matrix(y_test,y_pred)
-print(cm)
-print(accuracy_score(y_test,y_pred))
+
 # Plot the confusion matrix
 plt.figure(figsize=(8, 6))
 sns.heatmap(cm, annot=True, cmap='Blues', fmt='d')
@@ -203,12 +200,7 @@ plt.xlabel('Predicted labels')
 plt.ylabel('True labels')
 plt.title('Confusion Matrix')
 plt.show()
-print(classification_report(y_test, y_pred))
-## Analyzing the test data :
-analysis_df = pd.DataFrame(X_test_cv.toarray(), columns=cv.get_feature_names_out())
-analysis_df['y_test']=y_test
-analysis_df['y_pred']=y_pred
-analysis_df.to_csv(r"C:\Users\Admin\Documents\Downloads\analysis.csv",index=False)
+
 ## Exploratory Data Analysis
 sentiment_counts = df['Sentiment'].value_counts()
 fig = px.bar(sentiment_counts,height=400,width=700)
