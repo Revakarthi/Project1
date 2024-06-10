@@ -2,19 +2,25 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt  
 import seaborn as sns 
+
 # Load the healthcare data from CSV
 HC_Review=pd.read_csv(r"C:\Users\Admin\Documents\Downloads\healthcare_reviews.csv")
 HC_Review.head()
+
 **DATASET**:
 **Data Cleaning :**
 HC_Review.isnull().sum()
+
 HC_Review.shape
+
 #Handling Missing Value
 #If a small percentage of data is missing (e.g., 10%), it might be acceptable to delete those rows
 df=HC_Review.dropna()
 df.shape
+
 # 1) Lowering of data
 df['Review_Text']=df['Review_Text'].str.lower()
+
 # **Define keywords for sentiment analysis**
 positive_keywords = ['great', 'excellent', 'highly recommended', 'satisfied', 'caring', 'attentive', 'couldn\'t be happier', 'very satisfied']
 negative_keywords = ['bad experience', 'avoid', 'terrible', 'disappointing', 'would not recommend', 'won\'t be coming back']
@@ -39,15 +45,18 @@ def clean_data(row):
 df['cleaned_rating'] = df.apply(clean_data, axis=1)
 
 # Check the cleaned data
-df
+df.head()
+
 #Assigning Sentiment Based on Cleaned Ratings
 df.loc[df['cleaned_rating'] >3, 'Sentiment'] = 'positive'
 df.loc[df['cleaned_rating'] ==3, 'Sentiment'] = 'neutral'
 df.loc[df['cleaned_rating'] <3, 'Sentiment'] = 'negative'
+
 #Assigning Numerical Sentiment Ratings Based on Cleaned Ratings
 df.loc[df['cleaned_rating'] >3, 'Sentiment_rating'] = '1'
 df.loc[df['cleaned_rating'] ==3, 'Sentiment_rating'] = '0'
 df.loc[df['cleaned_rating'] <3, 'Sentiment_rating'] = '-1'
+
 # import libraries for Data Cleaning
 import nltk
 from nltk.tokenize import word_tokenize
@@ -57,6 +66,7 @@ import string
 from nltk.stem import WordNetLemmatizer
 nltk.download('wordnet')
 nltk.download('punkt')
+
 # 2) Tokenization of data
 #Tokenize text data in a DataFrame
 df['tokenized_reviews'] = df.apply(lambda row: nltk.word_tokenize(row['Review_Text']), axis=1)
@@ -163,9 +173,11 @@ for k in range(2, 21):
 # Print the scores for each k    
 for keys, values in scores.items(): 
     print(keys, ':', values) 
+
 # Optimal K value is 11
 knnclf = KNeighborsClassifier(n_neighbors = 11) 
 knnclf.fit(X_train_cv, y_train)
+
 # Plotting K values vs. Training accuracy
 plt.figure(figsize=(10, 6))
 plt.plot(K, training, marker='o', linestyle='-', color='b', label='Training Accuracy')
@@ -206,3 +218,20 @@ sentiment_counts = df['Sentiment'].value_counts()
 fig = px.bar(sentiment_counts,height=400,width=700)
 fig.update_layout(showlegend=False)
 fig.show()
+
+## Project Summary
+#### The primary objective of this project was to predict sentiment ratings from cleaned textual data using various machine learning algorithms. I implemented and evaluated three different algorithms: 
+* K-Nearest Neighbors (KNN) and Logistic Regression to determine their effectiveness in sentiment analysis tasks.
+
+* In Data Collection and Cleaning, Ratings of the positive and negative sentiments were corrected accordingly to ensure high-quality input data. The cleaned text was used as features (X), and sentiment ratings were used as the target variable (y).
+* In Dataset Splitting random state 42 was used to ensure reproducibility.
+* In Evaluation Metrics, in addition to accuracy, precision, recall, and F1-score metrics were used to evaluate model performance comprehensively.
+
+## Insights
+* Null value 100 ROWs have been removed since its around 10% of dataset.
+* In review text, low rating were given under 'health care provider was excellent', 'very satisfied with the service received' and 'staff was caring and attentive' respective ratings have been cleaned to have proper input data which has supported in achieving the proper accuracy score.
+* same way, high rating were given under review texts: 'terrible experience' and 'bad experience with the health care provider', respevitve ratings have been cleanded to have proper input data which has also supported in achieving proper accuracy score.
+
+## Conclusion
+#### This project successfully demonstrated that KNN and Logistic Regression models are all effective for sentiment analysis, each achieving an accuracy of (78-79)%, achieving algorithm robustness which incdicates sentiment analysis problem is well defined. 
+#### The results underscore the importance of data quality and feature representation in machine learning tasks.  
